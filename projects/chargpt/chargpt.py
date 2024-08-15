@@ -1,8 +1,9 @@
 """
 Trains a character-level language model.
 """
-
 import os
+os.environ['HF_HOME'] = '/home/ubuntu/USERS/clareche/cache'
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import sys
 
 import torch
@@ -84,7 +85,6 @@ class CharDataset(Dataset):
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
     # get default config and overrides from the command line, if any
     config = get_config()
     config.merge_from_args(sys.argv[1:])

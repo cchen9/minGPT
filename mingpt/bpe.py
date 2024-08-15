@@ -7,8 +7,9 @@ but was mildly modified because the original implementation is a bit confusing.
 I also tried to add as many comments as possible, my own understanding of what's
 going on.
 """
-
 import os
+os.environ['HF_HOME'] = '/home/ubuntu/USERS/clareche/cache'
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import json
 import regex as re
 import requests

@@ -9,7 +9,9 @@ https://github.com/huggingface/transformers/blob/main/src/transformers/models/gp
 """
 
 import math
-
+import os
+os.environ['HF_HOME'] = '/home/ubuntu/USERS/clareche/cache'
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -50,6 +52,9 @@ class CausalSelfAttention(nn.Module):
         self.n_embd = config.n_embd
 
     def forward(self, x):
+        import pdb
+        #pdb.set_trace()
+
         B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
 
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
@@ -88,6 +93,8 @@ class Block(nn.Module):
         self.mlpf = lambda x: m.dropout(m.c_proj(m.act(m.c_fc(x)))) # MLP forward
 
     def forward(self, x):
+        import pdb
+        #pdb.set_trace()
         x = x + self.attn(self.ln_1(x))
         x = x + self.mlpf(self.ln_2(x))
         return x
@@ -197,7 +204,9 @@ class GPT(nn.Module):
         transposed = ['attn.c_attn.weight', 'attn.c_proj.weight', 'mlp.c_fc.weight', 'mlp.c_proj.weight']
         # basically the openai checkpoints use a "Conv1D" module, but we only want to use a vanilla nn.Linear.
         # this means that we have to transpose these weights when we import them
-        assert len(keys) == len(sd)
+        #assert len(keys) == len(sd)
+        # https://github.com/karpathy/minGPT/issues/120
+        assert len(keys) == len([k for k in sd if not k.endswith('.attn.bias')]) # attn.bias is not in the huggingface state dictionary, so we cannot check for it
         for k in keys:
             if any(k.endswith(w) for w in transposed):
                 # special treatment for the Conv1D weights we need to transpose
@@ -258,6 +267,8 @@ class GPT(nn.Module):
         return optimizer
 
     def forward(self, idx, targets=None):
+        import pdb
+        #pdb.set_trace()
         device = idx.device
         b, t = idx.size()
         assert t <= self.block_size, f"Cannot forward sequence of length {t}, block size is only {self.block_size}"

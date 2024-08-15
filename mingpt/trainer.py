@@ -5,7 +5,9 @@ so nothing in this file really has anything to do with GPT specifically.
 
 import time
 from collections import defaultdict
-
+import os
+os.environ['HF_HOME'] = '/home/ubuntu/USERS/clareche/cache'
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import torch
 from torch.utils.data.dataloader import DataLoader
 from mingpt.utils import CfgNode as CN
@@ -73,6 +75,9 @@ class Trainer:
             batch_size=config.batch_size,
             num_workers=config.num_workers,
         )
+
+        import pdb
+        #pdb.set_trace()
 
         model.train()
         self.iter_num = 0

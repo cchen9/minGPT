@@ -22,3 +22,15 @@ else:
 # ship the model to device and set to eval mode
 model.to(device)
 model.eval()
+
+def generate(prompt='', num_samples=10, steps=20, do_sample=True):
+    # tokenize the input prompt into integer input sequence
+    if use_mingpt:
+        tokenizer = BPETokenizer()
+        if prompt == '':
+            # to create unconditional samples...
+            # manually create a tensor with only the specia <|endoftext|> token
+            # similar to what openai's code does here https://github.com/openai/gpt-2/blob/master/src/generate_unconditional_samples.py
+            x = tokenizer.encoder.encoder['<|endoftext|>']
+            print(x)
+generate(prompt='', num_samples=10, steps=20)
